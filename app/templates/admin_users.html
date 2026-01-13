@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-5">
+  <h2 class="h4 fw-semibold mb-1">User onboarding</h2>
+  <div class="text-muted small">Approve or reject new accounts (manager approval stage)</div>
+
+  <div class="row g-3 mt-3">
+    <div class="col-lg-6">
+      <div class="card p-3">
+        <div class="fw-semibold">Pending approvals</div>
+        <div class="table-responsive mt-3">
+          <table class="table table-dark table-hover align-middle mb-0">
+            <thead><tr><th>Name</th><th>Email</th><th>Team</th><th class="text-end">Action</th></tr></thead>
+            <tbody>
+              {% for u in pending %}
+                <tr>
+                  <td>{{ u.name }}</td>
+                  <td class="small">{{ u.email }}<div class="text-muted">Mgr: {{ u.manager_email }}</div></td>
+                  <td>{{ u.team }}</td>
+                  <td class="text-end">
+                    <form method="post" action="{{ url_for('admin.approve_user', user_id=u.id) }}" class="d-inline">
+                      <button class="btn btn-sm btn-success">Approve</button>
+                    </form>
+                    <form method="post" action="{{ url_for('admin.reject_user', user_id=u.id) }}" class="d-inline">
+                      <button class="btn btn-sm btn-outline-light">Reject</button>
+                    </form>
+                  </td>
+                </tr>
+              {% else %}
+                <tr><td colspan="4" class="text-muted">No pending users.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card p-3">
+        <div class="fw-semibold">Recently active</div>
+        <div class="table-responsive mt-3">
+          <table class="table table-dark table-hover align-middle mb-0">
+            <thead><tr><th>Name</th><th>Email</th><th>Role</th></tr></thead>
+            <tbody>
+              {% for u in active %}
+                <tr>
+                  <td>{{ u.name }}</td>
+                  <td class="small">{{ u.email }}</td>
+                  <td><span class="badge tm-pill">{{ u.role }}</span></td>
+                </tr>
+              {% else %}
+                <tr><td colspan="3" class="text-muted">No active users.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-muted small mt-3">
+    Note: In a production system you might integrate email approval links; this demo uses an admin approval screen for reliability.
+  </div>
+</div>
+{% endblock %}

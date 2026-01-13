@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-5">
+  <div class="d-flex justify-content-between align-items-center">
+    <div>
+      <h2 class="h4 fw-semibold mb-1">My bookings</h2>
+      <div class="text-muted small">Requests, approvals, and history</div>
+    </div>
+    <a class="btn btn-primary" href="{{ url_for('bookings.new_booking') }}">New booking</a>
+  </div>
+
+  <div class="card mt-4 p-3 shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-dark table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Window (UTC)</th>
+            <th>Status</th>
+            <th>Machines</th>
+            <th>No-show</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for b in bookings %}
+            <tr>
+              <td>#{{ b.id }}</td>
+              <td class="small">
+                <div>{{ b.start_at.strftime("%Y-%m-%d %H:%M") }}</div>
+                <div class="text-muted">to {{ b.end_at.strftime("%Y-%m-%d %H:%M") }}</div>
+              </td>
+              <td>
+                {% set colour = "secondary" %}
+                {% if b.status == "approved" %}{% set colour="success" %}{% endif %}
+                {% if b.status == "rejected" %}{% set colour="danger" %}{% endif %}
+                {% if b.status == "pending" %}{% set colour="warning" %}{% endif %}
+                {% if b.status == "cancelled" %}{% set colour="info" %}{% endif %}
+                <span class="badge bg-{{ colour }}">{{ b.status }}</span>
+                {% if b.decision_note %}
+                  <div class="text-muted small mt-1">{{ b.decision_note }}</div>
+                {% endif %}
+              </td>
+              <td class="small">
+                {% for it in b.items %}
+                  <span class="badge tm-pill me-1 mb-1">{{ it.machine.name }}</span>
+                {% endfor %}
+              </td>
+              <td>
+                {% if b.no_show %}
+                  <span class="badge bg-danger">Yes</span>
+                {% else %}
+                  <span class="text-muted small">—</span>
+                {% endif %}
+              </td>
+              <td class="text-end">
+                {% if b.status in ["pending","approved"] %}
+                  <form method="post" action="{{ url_for('bookings.cancel_booking', booking_id=b.id) }}" class="d-inline">
+                    <button class="btn btn-sm btn-outline-light" onclick="return confirm('Cancel booking #{{ b.id }}?')">Cancel</button>
+                  </form>
+                {% endif %}
+                {% if b.status == "approved" and not b.checked_in %}
+                  <form method="post" action="{{ url_for('bookings.check_in', booking_id=b.id) }}" class="d-inline">
+                    <button class="btn btn-sm btn-primary">Check in</button>
+                  </form>
+                {% endif %}
+                {% if b.checked_in %}
+                  <span class="badge bg-success">Checked in</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% else %}
+            <tr><td colspan="6" class="text-muted">No bookings yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="text-muted small mt-3">
+    Times are shown in UTC for simplicity. In a real deployment you'd use user/timezone settings.
+  </div>
+</div>
+{% endblock %}

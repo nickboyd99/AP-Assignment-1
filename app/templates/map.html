@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block head %}
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <style>#map { height: 520px; border-radius: 16px; }</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <h2 class="h4 fw-semibold mb-1">Multi-site view</h2>
+  <div class="text-muted small">Where machines live (and where capacity constraints show up)</div>
+
+  <div class="row g-3 mt-3">
+    <div class="col-lg-8">
+      <div class="card p-3">
+        <div id="map"></div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card p-3">
+        <div class="fw-semibold">Sites</div>
+        <div class="text-muted small">Click a marker to view site stats</div>
+        <div class="list-group mt-3">
+          {% for s in sites %}
+            <div class="list-group-item">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <div class="fw-semibold">{{ s.city }}</div>
+                  <div class="text-muted small">{{ s.name }}</div>
+                </div>
+                <span class="badge tm-pill">{{ stats[s.id].total_machines }} machines</span>
+              </div>
+              <div class="text-muted small mt-2">Out of service: {{ stats[s.id].out_of_service }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script>
+    const sites = {{ sites|tojson }};
+    const stats = {{ stats|tojson }};
+
+    const centre = [54.5, -2.5]; // UK-ish centre
+    const map = L.map('map').setView(centre, 5.6);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    sites.forEach(s => {
+      const st = stats[s.id];
+      const html = `
+        <div style="min-width: 220px">
+          <div style="font-weight: 700; margin-bottom: 4px">${s.city}</div>
+          <div style="opacity: .8">${s.name}</div>
+          <hr style="opacity:.2"/>
+          <div><b>Total machines:</b> ${st.total_machines}</div>
+          <div><b>Out of service:</b> ${st.out_of_service}</div>
+        </div>
+      `;
+      L.marker([s.lat, s.lon]).addTo(map).bindPopup(html);
+    });
+  </script>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-5">
+  <div class="d-flex justify-content-between align-items-start">
+    <div>
+      <h2 class="h4 fw-semibold mb-1">Machine inventory</h2>
+      <div class="text-muted small">Toggle out-of-service status for maintenance windows</div>
+    </div>
+    <form method="get" class="d-flex gap-2">
+      <input class="form-control form-control-sm" name="q" value="{{ q }}" placeholder="Search name/type/category…">
+      <button class="btn btn-sm btn-outline-light">Search</button>
+    </form>
+  </div>
+
+  <div class="card mt-4 p-3 shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-dark table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th>Name</th><th>Type</th><th>Category</th><th>Site</th><th>Status</th><th class="text-end">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for m in machines %}
+            <tr>
+              <td>{{ m.name }}</td>
+              <td><span class="badge tm-pill">{{ m.machine_type }}</span></td>
+              <td class="small">{{ m.category }}</td>
+              <td class="small">{{ m.site.city }}</td>
+              <td>
+                {% if m.status == "available" %}
+                  <span class="badge bg-success">available</span>
+                {% else %}
+                  <span class="badge bg-danger">out_of_service</span>
+                {% endif %}
+              </td>
+              <td class="text-end">
+                <form method="post" action="{{ url_for('admin.toggle_oos', machine_id=m.id) }}">
+                  <button class="btn btn-sm btn-outline-light">Toggle</button>
+                </form>
+              </td>
+            </tr>
+          {% else %}
+            <tr><td colspan="6" class="text-muted">No machines found.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
