@@ -99,7 +99,7 @@ PYTHONPATH=. pytest
 AP-Assignment-1/
 ├── app/
 │   ├── blueprints/       # Route handlers (auth, bookings, admin, map)
-│   ├── services/         # Business logic (notifications, booking rules, utilisation)
+│   ├── services/         # Business logic (notifications, booking rules, utilization)
 │   ├── templates/        # HTML templates
 │   ├── static/           # CSS, JS, images
 │   ├── models.py         # Database models
