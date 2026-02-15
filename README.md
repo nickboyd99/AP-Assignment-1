@@ -120,3 +120,45 @@ AP-Assignment-1/
 - **Background Jobs**: APScheduler 3.10.4
 - **Testing**: pytest 8.3.2
 - **Configuration**: python-dotenv 1.0.1
+
+## Control & Team Workflow
+
+This project uses a structured Git workflow to support collaborative development and maintain code stability.
+
+Branching Strategy
+	•	The main branch is protected and acts as the integration branch.
+	•	All development work is carried out in feature branches:
+	•	feature/<description>
+	•	fix/<description>
+	•	chore/<description>
+
+Pull Request Policy
+	•	Direct commits to main are disabled.
+	•	All changes must be merged via Pull Request.
+	•	At least one peer approval is required before merging.
+	•	All PR discussions must be resolved prior to integration.
+
+Protection Controls
+	•	Force pushes to main are disabled.
+	•	Deletion of main is prevented.
+	•	Merge history is preserved to maintain traceability.
+
+Rationale
+
+This workflow ensures:
+	•	Code stability in the integration branch
+	•	Peer-reviewed changes
+	•	Clear traceability of feature development
+	•	Professional collaboration aligned with industry best practice
+
+## Governance & Risk Control Alignment
+
+Because this system is designed to manage operational issues (e.g. bookings, faults, or service tasks), maintaining integrity in the integration branch is essential.
+
+By enforcing pull-request based merging, peer review, and protected branch controls, we reduce the risk of:
+	•	Introducing untested functionality into the operational workflow
+	•	Regressions impacting issue tracking accuracy
+	•	Loss of change history or traceability
+	•	Single-point-of-failure development practices
+
+This mirrors real-world governance models used in production IT service environments, where controlled promotion of changes is critical to maintaining system reliability and auditability.
